@@ -5,9 +5,17 @@ const read = readline.createInterface({
   output: process.stdout,
 });
 
+const data = {
+  name: "abhi",
+  age: 14,
+};
+
+const headers = "HTTP1.0 200 OK\r\n";
+
 const client = net.createConnection({ port: 3000 }, () => {
   client.write("hai\r\n");
-
+  client.write(headers);
+  client.write(JSON.stringify(data));
   console.log("connected to server");
 });
 
