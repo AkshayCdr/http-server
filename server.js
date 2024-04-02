@@ -7,7 +7,8 @@ const server = net.createServer((socket) => {
   });
 
   socket.on("data", (data) => {
-    parseData(data);
+    const result = parseData(data);
+    console.log(result.body());
   });
 
   //   socket.write("HTTP/1.1 200 OK\r\n");
@@ -31,17 +32,31 @@ server.listen(3000, () => {
 function parseData(input) {
   console.log("inside the function");
   const data = input.toString();
-  // console.log(data);
+
   const [firstline, remaining] = firstLineParser(data);
   const [method, path, httpVersion] = firstline.split(" ");
 
   const [headers, body] = headerSplitter(remaining);
-  const result = headerParser(headers);
-
-  if (result.hasOwnProperty("Content-Length"))
-    bodyParser(body, result["Content-Type"]);
+  const headerParsed = headerParser(headers);
 
   console.log("outside the function");
+
+  return {
+    method,
+    path,
+    httpVersion,
+    headerParsed,
+    body: () =>
+      headerParsed.hasOwnProperty("Content-Length") &&
+      bodyParser(body, headerParsed["Content-Type"].trim()),
+  };
+  // const getmethod = () => method;
+  // const getpath = () => path;
+  // const getHttpVersion = () => httpVersion;
+  // const getHeader = () => headerParsed;
+  // const getBody = () =>
+  //   headerParsed.hasOwnProperty("Content-Length") &&
+  //   bodyParser(body, headerParsed["Content-Type"].trim());
 }
 
 const firstLineParser = (input) => [
@@ -58,6 +73,6 @@ const headerParser = (input) =>
   Object.fromEntries(input.split("\r\n").map((string) => string.split(":")));
 
 function bodyParser(body, contentType) {
-  console.log(body);
-  console.log(contentType);
+  if (contentType === "application/json") return JSON.parse(body);
+  if (contentType === "text/plain") return body.toString();
 }
