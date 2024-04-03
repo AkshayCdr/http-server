@@ -1,21 +1,26 @@
 import net from "net";
-import { parseData } from "./parseData.js";
+import { parseRequest } from "./parseRequest.js";
 import { sendResponse } from "./response.js";
+import { parseResponse } from "./parseResponse.js";
 
-const server = net.createServer((socket) => {
+const routes = {};
+
+export function server() {
+  const app = net.createServer(handleConnection);
+  app.get = function (path, getHandler) {
+    routes[path] = getHandler;
+  };
+  app.post = function (path, postHandler) {
+    routes[path] = postHandler;
+  };
+
+  return app;
+}
+
+function handleConnection(socket) {
   console.log("client connected");
-  socket.on("end", () => {
-    console.log("client disconnected");
-  });
-
   socket.on("data", (data) => {
-    const parsedData = parseData(data);
-    // sendResponse(socket, parsedData);
+    const req = parseRequest(data);
+    console.log(req);
   });
-});
-server.on("error", (err) => {
-  throw err;
-});
-server.listen(3000, () => {
-  console.log("server bound");
-});
+}

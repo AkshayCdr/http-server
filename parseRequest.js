@@ -1,9 +1,6 @@
-export function parseData(input) {
-  const data = input.toString();
-
-  const [firstline, remaining] = firstLineParser(data);
+export function parseRequest(input) {
+  const [firstline, remaining] = firstLineParser(input.toString());
   const [method, path, httpVersion] = firstline.split(" ");
-
   const [headers, body] = headerSplitter(remaining);
   const parsedHeader = headerParser(headers);
 
@@ -25,11 +22,15 @@ const firstLineParser = (input) => [
 
 const headerSplitter = (input) => [
   input.split(/(\r?\n){2}/)[0],
-  input.slice(input.split(/(\r?\n){2}/)[0].length).trim(),
+  input.slice(input.split(/(\r?\n){2}/)[0].length),
 ];
 
 const headerParser = (input) =>
-  Object.fromEntries(input.split("\r\n").map((string) => string.split(":")));
+  Object.fromEntries(
+    input
+      .split("\r\n")
+      .map((string) => string.split(":").map((part) => part.trim()))
+  );
 
 function bodyParser(body, contentType) {
   if (contentType === "application/json") return JSON.parse(body);
