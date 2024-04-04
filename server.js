@@ -1,6 +1,7 @@
 import net from "net";
 import { parseRequest, splitBody } from "./parseRequest.js";
-import { getResponse, sendResponse } from "./getResponse.js";
+import { getResponse, sendResponse, sendStatic } from "./getResponse.js";
+import fs from "fs";
 
 const routes = {
   GET: {},
@@ -9,22 +10,30 @@ const routes = {
   DELETE: {},
 };
 
+const middleWares = [];
+
 const setRoute = (method, path, handler) => (routes[method][path] = handler);
+
+const setMiddlewares = (callback) => middleWares.push(callback);
 
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
+  // app.static = () => renderStatic;
+  app.use = setMiddlewares;
   return app;
 }
 
 function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", (data) => {
+    // renderStatic(socket, "public");
     if (Buffer.byteLength(data) < 0) return null;
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
     const methodHandler = routes[req.method][req.path] || null;
+
     if (methodHandler) {
       methodHandler(req, res);
     } else {
@@ -37,3 +46,11 @@ function handleConnection(socket) {
     console.log("client disconnected");
   });
 }
+
+//sendstatic --
+
+//get request --
+
+//send response --
+
+//

@@ -2,7 +2,7 @@ import { statusCode } from "./statuscode.js";
 
 const getFirstLine = (status) =>
   "HTTP/1.1" + " " + status + " " + statusCode[status] + "\r\n";
-
+const returnSpace = "\r\n";
 const getHeader = (data, mimeType) => {
   let length;
   if (mimeType === "text/plain")
@@ -21,7 +21,6 @@ const getHeader = (data, mimeType) => {
 };
 
 export function getResponse(req, socket) {
-  const returnSpace = "\r\n";
   return {
     send: function (data) {
       socket.write(getFirstLine(200));
@@ -42,5 +41,15 @@ export function getResponse(req, socket) {
   };
 }
 
-export const sendResponse = (socket, data) =>
+export function sendResponse(socket, data) {
   socket.write(getFirstLine(data.status));
+  socket.write("\r\n");
+}
+
+export function sendStatic(socket, data) {
+  console.log(data);
+  socket.write(getFirstLine(200));
+  socket.write(getHeader(data, "text/html"));
+  socket.write(returnSpace);
+  socket.write(JSON.stringify(data) + "\r\n");
+}
