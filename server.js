@@ -1,6 +1,6 @@
 import net from "net";
 import { parseRequest } from "./parseRequest.js";
-import { getResponse } from "./getResponse.js";
+import { getResponse, sendResponse } from "./getResponse.js";
 
 const routes = {
   GET: {},
@@ -21,9 +21,16 @@ export function server() {
 function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", (data) => {
+    if (Buffer.byteLength(data) < 0) return null;
     const req = parseRequest(data);
     const res = getResponse(req, socket);
-    routes[req.method][req.path](req, res);
+    // routes[req.method][req.path](req, res);
+    const methodHandler = routes[req.method][req.path] || null;
+    if (methodHandler) {
+      methodHandler(req, res);
+    } else {
+      sendResponse(socket, { status: 404 });
+    }
     socket.end();
   });
 
