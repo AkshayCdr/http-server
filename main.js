@@ -4,13 +4,25 @@ const PORT = 3000;
 
 const app = server();
 
-app.get("/", (req, res) => {
-  console.log(req.body());
-  res.send(200);
+app.route("GET", "/", (req, res) => {
+  req.httpVersion;
+  // res.send("this is a response from get");
+  res.json({ error: "this is a error" });
 });
 
-app.post("/", (req) => {
-  console.log(req);
+app.route("POST", "/", (req, res) => {
+  req.httpVersion;
+  res.send("this is a response from post");
+});
+
+app.route("PUT", "/", (req, res) => {
+  req.httpVersion;
+  res.sendStatus(300);
+});
+
+app.route("DELETE", "/", (req, res) => {
+  req.httpVersion;
+  res.send("this is a response from delete");
 });
 
 app.listen(PORT, () => {

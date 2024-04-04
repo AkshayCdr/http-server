@@ -3,24 +3,44 @@ import { statusCode } from "./statuscode.js";
 const getFirstLine = (status) =>
   "HTTP/1.1" + " " + status + " " + statusCode[status] + "\r\n";
 
+const getHeader = (data, mimeType) => {
+  let length;
+  if (mimeType === "text/plain")
+    length = Buffer.byteLength(data) + Buffer.byteLength("\r\n");
+  if (mimeType === "application/json")
+    length =
+      Buffer.byteLength(JSON.stringify(data)) + Buffer.byteLength("\r\n");
+  return (
+    "Content-Type : " +
+    mimeType +
+    "\r\n" +
+    "Content-Length : " +
+    length +
+    "\r\n"
+  );
+};
+
 export function getResponse(req, socket) {
   const returnSpace = "\r\n";
   return {
-    send: function (status) {
-      socket.write(getFirstLine(status));
+    send: function (data) {
+      socket.write(getFirstLine(200));
+      socket.write(getHeader(data, "text/plain"));
+      socket.write(returnSpace);
+      data && socket.write(JSON.stringify(data));
+    },
+    sendStatus: function (data) {
+      socket.write(getFirstLine(data));
       socket.write(returnSpace);
     },
-    sendStatus: function (status) {
-      const firstLine =
-        req.httpVersion + " " + status + " " + statusCode[status] + returnSpace;
-      // const body =
-      socket.write(firstLine);
+    json: function (data) {
+      socket.write(getFirstLine(200));
+      socket.write(getHeader(data, "application/json"));
       socket.write(returnSpace);
+      socket.write(JSON.stringify(data) + "\r\n");
     },
   };
 }
 
-export function sendResponse(socket, data) {
-  const firstLine = getFirstLine(data.status);
-  socket.write(firstLine);
-}
+export const sendResponse = (socket, data) =>
+  socket.write(getFirstLine(data.status));
