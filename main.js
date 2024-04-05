@@ -7,6 +7,14 @@ const app = server();
 // app.static("public");
 // server().static("public");
 
+app.use((req, res) => {
+  console.log("this is first middleware");
+});
+
+app.use((req, res) => {
+  console.log("this is the second middleware");
+});
+
 app.route("GET", "/", (req, res) => {
   res.json({ error: "this is a error" });
 });

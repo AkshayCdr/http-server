@@ -32,6 +32,14 @@ function handleConnection(socket) {
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
+
+    if (middleWares.length > 0) {
+      middleWares.forEach((middleware) => middleware(req, res));
+    }
+
+    // let index = 0;
+    // function next() {}
+
     const methodHandler = routes[req.method][req.path] || null;
 
     if (methodHandler) {
@@ -46,11 +54,3 @@ function handleConnection(socket) {
     console.log("client disconnected");
   });
 }
-
-//sendstatic --
-
-//get request --
-
-//send response --
-
-//
