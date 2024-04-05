@@ -19,7 +19,6 @@ const setMiddlewares = (callback) => middleWares.push(callback);
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
-  // app.static = () => renderStatic;
   app.use = setMiddlewares;
   return app;
 }
@@ -27,18 +26,18 @@ export function server() {
 function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", (data) => {
-    // renderStatic(socket, "public");
     if (Buffer.byteLength(data) < 0) return null;
+
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
 
-    if (middleWares.length > 0) {
-      middleWares.forEach((middleware) => middleware(req, res));
+    let index = 0;
+    middleWares[index](req, res, next);
+    function next() {
+      index = index + 1;
+      middleWares.length > index && middleWares[index](req, res, next);
     }
-
-    // let index = 0;
-    // function next() {}
 
     const methodHandler = routes[req.method][req.path] || null;
 

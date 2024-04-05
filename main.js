@@ -4,15 +4,18 @@ const PORT = 3000;
 
 const app = server();
 
-// app.static("public");
-// server().static("public");
+// app.use(bodyParser);
 
-app.use((req, res) => {
+app.use((req, res, next) => {
   console.log("this is first middleware");
+  console.log(req);
+  next();
 });
 
-app.use((req, res) => {
+app.use((req, res, next) => {
   console.log("this is the second middleware");
+  console.log(res);
+  next();
 });
 
 app.route("GET", "/", (req, res) => {
@@ -34,3 +37,7 @@ app.route("DELETE", "/", (req, res) => {
 app.listen(PORT, () => {
   console.log("listening");
 });
+
+function bodyParser() {
+  console.log("body parsing...");
+}
