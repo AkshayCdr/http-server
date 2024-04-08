@@ -43,15 +43,14 @@ async function handleConnection(socket) {
 
     const methodHandler = routes[req.method][req.path] || null;
 
-    if (methodHandler) {
-      methodHandler(req, res);
-    } else {
-      sendResponse(socket, { status: 404 });
-    }
-    socket.end();
-  });
+    socket.on("end", () => {
+      console.log("client disconnected");
+    });
 
-  socket.on("end", () => {
-    console.log("client disconnected");
+    methodHandler
+      ? methodHandler(req, res)
+      : socket.writable && sendResponse(socket, { status: 404 });
+
+    socket.end();
   });
 }

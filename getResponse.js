@@ -25,6 +25,7 @@ const getHeader = (data, mimeType) => {
 export function getResponse(req, socket) {
   let firstLine = ``;
   const header = {};
+  const body = {};
 
   return {
     send: function (data) {
@@ -63,7 +64,7 @@ export function getResponse(req, socket) {
       socket.write(`Content-Type: text/html\r\n`);
       socket.write(returnSpace);
       socket.write(data);
-      // socket.end();
+      socket.end();
       // const response = `HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n${data}`;
       // socket.write(response);
       // socket.write(JSON.stringify(data));
