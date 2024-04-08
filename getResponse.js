@@ -42,8 +42,6 @@ export function getResponse(req, socket) {
       socket.write(JSON.stringify(data) + "\r\n");
     },
     setHeader: function (key, value) {
-      console.log(key);
-      console.log(value);
       header[key] = value + "\r\n";
     },
     writeHead: function (status) {

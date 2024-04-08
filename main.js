@@ -1,10 +1,12 @@
 import { server } from "./server.js";
+import { cors } from "./middlewares.js";
+import { staticPage } from "./middlewares.js";
 
 const PORT = 3000;
 
 const app = server();
 
-// app.use(bodyParser);
+app.use(staticPage);
 
 app.use(cors);
 
@@ -13,7 +15,7 @@ app.route("GET", "/task", (req, res) => {
 });
 
 app.route("POST", "/task", (req, res) => {
-  console.log("inside post");
+  console.log("inside post ");
   console.log(req);
   res.send("this is a response from post");
 });
@@ -29,16 +31,3 @@ app.route("DELETE", "/", (req, res) => {
 app.listen(PORT, () => {
   console.log("listening");
 });
-
-// function bodyParser() {
-//   console.log("body parsing...");
-// }
-
-function cors(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  if (req.method === "OPTIONS") {
-    res.writeHead(200);
-  }
-  next();
-}

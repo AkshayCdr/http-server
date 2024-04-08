@@ -23,21 +23,18 @@ export function server() {
   return app;
 }
 
-function handleConnection(socket) {
+async function handleConnection(socket) {
   console.log("client connected");
-  socket.on("data", (data) => {
+  socket.on("data", async (data) => {
     if (Buffer.byteLength(data) < 0) return null;
 
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
 
-    // console.log(req)
-    // console.log(routes)
-
     if (middleWares.length > 0) {
       let index = 0;
-      middleWares[index](req, res, next);
+      await middleWares[index](req, res, next);
       function next() {
         index = index + 1;
         middleWares.length > index && middleWares[index](req, res, next);

@@ -1,12 +1,14 @@
 export function parseRequest(input) {
   const [firstline, remaining] = firstLineParser(input.toString());
-  console.log(firstline)
-  console.log(remaining)
   const [method, path, httpVersion] = firstline.split(" ");
+  // if (method === "OPTIONS") return corsParser(firstline.split(" "), remaining);
   const parsedHeader = headerParser(remaining);
 
   return {
-    method,
+    method:
+      method === "OPTIONS"
+        ? parsedHeader["Access-Control-Request-Method"]
+        : method,
     path,
     httpVersion,
     parsedHeader,
@@ -27,7 +29,7 @@ const headerParser = (input) =>
 
 export const splitBody = (input) => input.toString().split(/\r?\n\r?\n/);
 
-// export function splitBody(input) {
-//   const [headers, body] = input.toString().split(/\r?\n\r?\n/);
-//   bodyBuffer = Buffer.
+// function corsParser([_, path, httpVersion], remaining) {
+//   const parsedHeader = headerParser(remaining);
+//   parsedHeader["Access-Control-Request-Method"]
 // }
