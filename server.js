@@ -32,11 +32,16 @@ function handleConnection(socket) {
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
 
-    let index = 0;
-    middleWares[index](req, res, next);
-    function next() {
-      index = index + 1;
-      middleWares.length > index && middleWares[index](req, res, next);
+    // console.log(req)
+    // console.log(routes)
+
+    if (middleWares.length > 0) {
+      let index = 0;
+      middleWares[index](req, res, next);
+      function next() {
+        index = index + 1;
+        middleWares.length > index && middleWares[index](req, res, next);
+      }
     }
 
     const methodHandler = routes[req.method][req.path] || null;

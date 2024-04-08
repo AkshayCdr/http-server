@@ -21,6 +21,9 @@ const getHeader = (data, mimeType) => {
 };
 
 export function getResponse(req, socket) {
+  let firstLine = ``;
+  const header = {};
+
   return {
     send: function (data) {
       socket.write(getFirstLine(200));
@@ -37,6 +40,17 @@ export function getResponse(req, socket) {
       socket.write(getHeader(data, "application/json"));
       socket.write(returnSpace);
       socket.write(JSON.stringify(data) + "\r\n");
+    },
+    setHeader: function (key, value) {
+      console.log(key);
+      console.log(value);
+      header[key] = value + "\r\n";
+    },
+    writeHead: function (status) {
+      firstLine = getFirstLine(status);
+      socket.write(firstLine);
+      socket.write(JSON.stringify(header));
+      socket.write(returnSpace);
     },
   };
 }

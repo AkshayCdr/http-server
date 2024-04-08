@@ -1,5 +1,7 @@
 export function parseRequest(input) {
   const [firstline, remaining] = firstLineParser(input.toString());
+  console.log(firstline)
+  console.log(remaining)
   const [method, path, httpVersion] = firstline.split(" ");
   const parsedHeader = headerParser(remaining);
 

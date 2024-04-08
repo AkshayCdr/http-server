@@ -6,23 +6,15 @@ const app = server();
 
 // app.use(bodyParser);
 
-app.use((req, res, next) => {
-  console.log("this is first middleware");
-  console.log(req);
-  next();
-});
+app.use(cors);
 
-app.use((req, res, next) => {
-  console.log("this is the second middleware");
-  console.log(res);
-  next();
-});
-
-app.route("GET", "/", (req, res) => {
+app.route("GET", "/task", (req, res) => {
   res.json({ error: "this is a error" });
 });
 
-app.route("POST", "/", (req, res) => {
+app.route("POST", "/task", (req, res) => {
+  console.log("inside post");
+  console.log(req);
   res.send("this is a response from post");
 });
 
@@ -38,6 +30,15 @@ app.listen(PORT, () => {
   console.log("listening");
 });
 
-function bodyParser() {
-  console.log("body parsing...");
+// function bodyParser() {
+//   console.log("body parsing...");
+// }
+
+function cors(req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+  }
+  next();
 }
