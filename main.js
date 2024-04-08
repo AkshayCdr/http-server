@@ -6,19 +6,23 @@ const PORT = 3000;
 
 const app = server();
 
-app.use(staticPage);
+// app.use(staticPage);
+
+// const staticMiddleWare = await staticPage("public");
+
+// app.use(staticMiddleWare);
 
 app.use(cors);
 
-// app.route("GET", "/task", (req, res) => {
-//   res.json({ error: "this is a error" });
-// });
+app.route("GET", "/task", (req, res) => {
+  res.json({ error: "this is a error" });
+});
 
-// app.route("POST", "/task", (req, res) => {
-//   console.log("inside post ");
-//   console.log(req);
-//   res.send("this is a response from post");
-// });
+app.route("POST", "/task", (req, res) => {
+  console.log("inside post ");
+  console.log(req);
+  res.send("this is a response from post");
+});
 
 // app.route("PUT", "/", (req, res) => {
 //   res.sendStatus(300);

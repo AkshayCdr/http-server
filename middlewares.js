@@ -7,17 +7,19 @@ export function cors(req, res, next) {
   next();
 }
 
-export async function staticPage(req, res, next) {
-  try {
-    const path =
-      req.path === "/" ? `./public/index.html` : `./public/${req.path}`;
-    const data = fs.readFileSync(path).toString();
-    const memeType = getMemeType(getFileType(path));
-    res.sendStatic(data, memeType);
-  } catch (error) {
-    res.sendStatus(404);
-  }
-  next();
+export async function staticPage(url) {
+  return async function (req, res, next) {
+    try {
+      const path =
+        req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
+      const data = fs.readFileSync(path).toString();
+      const memeType = getMemeType(getFileType(path));
+      res.sendStatic(data, memeType);
+    } catch (error) {
+      res.sendStatus(404);
+    }
+    next();
+  };
 }
 
 const getFileType = (path) => path.match(/\.\w+/)[0].slice(1);
