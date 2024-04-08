@@ -57,11 +57,12 @@ export function getResponse(req, socket) {
       socket.write(returnSpace);
       socket.end();
     },
-    sendStatic: function (data) {
+    sendStatic: function (data, mimeType) {
       socket.write(getFirstLine(200));
+      console.log(data);
       // socket.write(getHeader(data, "text/html"));
       // console.log(getHeader(data, "text/html"));
-      socket.write(`Content-Type: text/html\r\n`);
+      socket.write(`Content-Type: ${mimeType}\r\n`);
       socket.write(returnSpace);
       socket.write(data);
       socket.end();
@@ -76,11 +77,3 @@ export function sendResponse(socket, data) {
   socket.write(getFirstLine(data.status));
   socket.write("\r\n");
 }
-
-// export function sendStatic(socket, data) {
-//   console.log(data);
-//   socket.write(getFirstLine(200));
-//   socket.write(getHeader(data, "text/html"));
-//   socket.write(returnSpace);
-//   socket.write(JSON.stringify(data) + "\r\n");
-// }

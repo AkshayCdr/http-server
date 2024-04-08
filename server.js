@@ -25,6 +25,7 @@ export function server() {
 
 async function handleConnection(socket) {
   console.log("client connected");
+
   socket.on("data", async (data) => {
     if (Buffer.byteLength(data) === 0) return null;
 
@@ -43,9 +44,7 @@ async function handleConnection(socket) {
 
     const methodHandler = routes[req.method][req.path] || null;
 
-    socket.on("end", () => {
-      console.log("client disconnected");
-    });
+    socket.on("end", () => console.log("client disconnected"));
 
     methodHandler
       ? methodHandler(req, res)
