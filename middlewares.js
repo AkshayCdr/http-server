@@ -14,6 +14,7 @@ export async function staticPage(req, res, next) {
   try {
     const data = fs.readFileSync("./public/index.html").toString();
     console.log(data);
+    res.sendStatic(data);
   } catch (error) {}
   next();
 }

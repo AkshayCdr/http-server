@@ -1,6 +1,6 @@
 import net from "net";
 import { parseRequest, splitBody } from "./parseRequest.js";
-import { getResponse, sendResponse, sendStatic } from "./getResponse.js";
+import { getResponse, sendResponse } from "./getResponse.js";
 import fs from "fs";
 
 const routes = {
@@ -26,7 +26,7 @@ export function server() {
 async function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", async (data) => {
-    if (Buffer.byteLength(data) < 0) return null;
+    if (Buffer.byteLength(data) === 0) return null;
 
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers);

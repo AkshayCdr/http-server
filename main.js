@@ -10,23 +10,23 @@ app.use(staticPage);
 
 app.use(cors);
 
-app.route("GET", "/task", (req, res) => {
-  res.json({ error: "this is a error" });
-});
+// app.route("GET", "/task", (req, res) => {
+//   res.json({ error: "this is a error" });
+// });
 
-app.route("POST", "/task", (req, res) => {
-  console.log("inside post ");
-  console.log(req);
-  res.send("this is a response from post");
-});
+// app.route("POST", "/task", (req, res) => {
+//   console.log("inside post ");
+//   console.log(req);
+//   res.send("this is a response from post");
+// });
 
-app.route("PUT", "/", (req, res) => {
-  res.sendStatus(300);
-});
+// app.route("PUT", "/", (req, res) => {
+//   res.sendStatus(300);
+// });
 
-app.route("DELETE", "/", (req, res) => {
-  res.send("this is a response from delete");
-});
+// app.route("DELETE", "/", (req, res) => {
+//   res.send("this is a response from delete");
+// });
 
 app.listen(PORT, () => {
   console.log("listening");
