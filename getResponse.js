@@ -1,4 +1,5 @@
 import { statusCode } from "./statuscode.js";
+import { conversion } from "./mimeType.js";
 
 const getFirstLine = (status) =>
   "HTTP/1.1" + " " + status + " " + statusCode[status] + "\r\n";
@@ -59,16 +60,13 @@ export function getResponse(req, socket) {
     },
     sendStatic: function (data, mimeType) {
       socket.write(getFirstLine(200));
-      console.log(data);
+      const encodedData = conversion[mimeType].encode(data);
       // socket.write(getHeader(data, "text/html"));
       // console.log(getHeader(data, "text/html"));
       socket.write(`Content-Type: ${mimeType}\r\n`);
       socket.write(returnSpace);
-      socket.write(data);
+      socket.write(encodedData);
       socket.end();
-      // const response = `HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n${data}`;
-      // socket.write(response);
-      // socket.write(JSON.stringify(data));
     },
   };
 }

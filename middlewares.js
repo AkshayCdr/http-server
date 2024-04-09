@@ -12,7 +12,7 @@ export async function staticPage(url) {
     try {
       const path =
         req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
-      const data = fs.readFileSync(path).toString();
+      const data = fs.readFileSync(path);
       const memeType = getMemeType(getFileType(path));
       res.sendStatic(data, memeType);
     } catch (error) {
@@ -28,6 +28,7 @@ const getMemeType = (file) => {
   const memeTypes = {
     html: "text/html",
     css: "text/css",
+    jpeg: "image/jpeg",
   };
 
   return memeTypes[file];

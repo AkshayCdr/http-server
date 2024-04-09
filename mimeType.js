@@ -1,17 +1,22 @@
-const conversion = {
+export const conversion = {
   "application/json": {
-    json: (data) => JSON.stringify(data),
-    extract: (data) => JSON.parse(data),
+    decode: (data) => JSON.stringify(data),
+    encode: (data) => JSON.parse(data),
   },
   "text/plain": {
-    json: (data) => JSON.stringify(data),
-    extract: (data) => data.toString(),
+    decode: (data) => JSON.stringify(data),
+    encode: (data) => data.toString(),
   },
-  //   "text/html":{
-
-  //   }
+  "text/html": {
+    decode: (data) => data,
+    encode: (data) => data,
+  },
+  "text/css": {
+    decode: (data) => data,
+    encode: (data) => data,
+  },
+  "image/jpeg": {
+    decode: (data) => data,
+    encode: (data) => data,
+  },
 };
-
-// function mime(mimeType){
-//     if
-// }
