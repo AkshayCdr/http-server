@@ -19,4 +19,8 @@ export const conversion = {
     decode: (data) => data,
     encode: (data) => data,
   },
+  "text/javascript": {
+    decode: (data) => data,
+    encode: (data) => data,
+  },
 };

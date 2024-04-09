@@ -29,6 +29,7 @@ const getMemeType = (file) => {
     html: "text/html",
     css: "text/css",
     jpeg: "image/jpeg",
+    js: "text/javascript",
   };
 
   return memeTypes[file];

@@ -6,7 +6,7 @@ const PORT = 3000;
 
 const app = server();
 
-const staticMiddleWare = await staticPage("public");
+const staticMiddleWare = await staticPage("files");
 
 app.use(staticMiddleWare);
 
