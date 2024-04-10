@@ -1,6 +1,6 @@
 import { server } from "./server.js";
 import { cors } from "./middlewares.js";
-import { staticPage } from "./middlewares.js";
+import { staticPage, bodyParser } from "./middlewares.js";
 import { insertData, getData } from "./Controller/controller.js";
 
 const PORT = 3000;
@@ -18,7 +18,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser);
+// app.use(bodyParser);
+
+app.body(bodyParser);
 
 // app.use(cors);
 

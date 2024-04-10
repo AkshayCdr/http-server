@@ -1,10 +1,10 @@
 export const conversion = {
   "application/json": {
-    decode: (data) => JSON.stringify(data),
-    encode: (data) => JSON.parse(data),
+    decode: (data) => JSON.parse(data),
+    encode: (data) => JSON.stringify(data),
   },
   "text/plain": {
-    decode: (data) => JSON.stringify(data),
+    decode: (data) => data,
     encode: (data) => data.toString(),
   },
   "text/html": {

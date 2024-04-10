@@ -1,4 +1,5 @@
 import fs from "fs";
+import { conversion } from "./mimeType.js";
 
 export function cors(req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -7,7 +8,18 @@ export function cors(req, res, next) {
   next();
 }
 
-export function bodyParser(req, res, next) {}
+// export function bodyParser(req, res, body) {
+//   console.log("inside body parser");
+//   console.log(body);
+//   const memeType = req.parsedHeader["Content-Type"];
+//   const data = conversion[memeType].decode(body);
+//   req.body = data;
+// }
+
+export const bodyParser = (req, body) =>
+  body.length === 0
+    ? null
+    : conversion[req.parsedHeader["Content-Type"]].decode(body);
 
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {

@@ -1,7 +1,6 @@
 export function parseRequest(input) {
   const [firstline, remaining] = firstLineParser(input.toString());
   const [method, path, httpVersion] = firstline.split(" ");
-  // if (method === "OPTIONS") return corsParser(firstline.split(" "), remaining);
   const parsedHeader = headerParser(remaining);
 
   return {
@@ -27,9 +26,24 @@ const headerParser = (input) =>
       .map((string) => string.split(":").map((part) => part.trim()))
   );
 
-export const splitBody = (input) => input.toString().split(/\r?\n\r?\n/);
+// export const splitBody = (input) => input.toString().split(/\r?\n\r?\n/);
 
-// function corsParser([_, path, httpVersion], remaining) {
-//   const parsedHeader = headerParser(remaining);
-//   parsedHeader["Access-Control-Request-Method"]
+// export function splitBody(input) {
+//   let index = input.indexOf("\r\n\r\n");
+//   console.log(index);
+//   const header = input.subarray(0, index).toString();
+//   const body = input.subarray(index, index.length).toString();
+//   console.log(header);
+//   console.log(body);
 // }
+
+// export function splitBody(input) {
+//   const index = input.indexOf("\r\n\r\n");
+
+//   return [input.subarray(0, index).toString(), input.subarray(index + 4)];
+// }
+
+export const splitBody = (input) => [
+  input.subarray(0, input.indexOf("\r\n\r\n")).toString(),
+  input.subarray(input.indexOf("\r\n\r\n") + 4),
+];

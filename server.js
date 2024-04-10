@@ -1,7 +1,6 @@
 import net from "net";
 import { parseRequest, splitBody } from "./parseRequest.js";
 import { getResponse, sendResponse } from "./getResponse.js";
-import fs from "fs";
 
 const routes = {
   GET: {},
@@ -14,17 +13,22 @@ const middleWares = [];
 
 const staticHandlers = [];
 
+const bodyParsers = [];
+
 const setRoute = (method, path, handler) => (routes[method][path] = handler);
 
 const setMiddlewares = (callback) => middleWares.push(callback);
 
 const setStatic = (callback) => staticHandlers.push(callback);
 
+const setBody = (callback) => bodyParsers.push(callback);
+
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
   app.static = setStatic;
+  app.body = setBody;
   return app;
 }
 
@@ -42,6 +46,10 @@ async function handleConnection(socket) {
       await staticHandler(req, res);
       if (res.headersSent) return; // If headers sent, stop further processing
     }
+
+    if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
+
+    console.log(req.body);
 
     let index = 0;
     if (middleWares.length > 0 && index < middleWares.length) {

@@ -1,5 +1,5 @@
 export function insertData(req, res) {
-  console.log("inside post");
+  // console.log("inside post");
   res.send("this is a response from post");
 }
 
