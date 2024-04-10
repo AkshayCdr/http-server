@@ -63,6 +63,3 @@ async function handleConnection(socket) {
     // socket.end();
   });
 }
-
-// 0 1 2 3 4 -> index
-// 1 2 3 4 5  -> lenfth
