@@ -29,6 +29,7 @@ export function getResponse(req, socket) {
   const body = {};
 
   return {
+    headersSent: false,
     send: function (data) {
       socket.write(getFirstLine(200));
       socket.write(getHeader(data, "text/plain"));
@@ -59,6 +60,7 @@ export function getResponse(req, socket) {
       socket.end();
     },
     sendStatic: function (data, mimeType) {
+      this.headersSent = true; //only here
       socket.write(getFirstLine(200));
       const encodedData = conversion[mimeType].encode(data);
       // socket.write(getHeader(data, "text/html"));

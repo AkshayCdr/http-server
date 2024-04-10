@@ -7,8 +7,10 @@ export function cors(req, res, next) {
   next();
 }
 
+export function bodyParser(req, res, next) {}
+
 export async function staticPage(url) {
-  return async function (req, res, next) {
+  return async function staticMidlleware(req, res) {
     try {
       const path =
         req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
@@ -16,9 +18,9 @@ export async function staticPage(url) {
       const memeType = getMemeType(getFileType(path));
       res.sendStatic(data, memeType);
     } catch (error) {
-      res.sendStatus(404);
+      // res.sendStatus(404);
+      return;
     }
-    next();
   };
 }
 
@@ -31,6 +33,5 @@ const getMemeType = (file) => {
     jpeg: "image/jpeg",
     js: "text/javascript",
   };
-
   return memeTypes[file];
 };

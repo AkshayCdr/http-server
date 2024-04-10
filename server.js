@@ -12,14 +12,19 @@ const routes = {
 
 const middleWares = [];
 
+const staticHandlers = [];
+
 const setRoute = (method, path, handler) => (routes[method][path] = handler);
 
 const setMiddlewares = (callback) => middleWares.push(callback);
+
+const setStatic = (callback) => staticHandlers.push(callback);
 
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
+  app.static = setStatic;
   return app;
 }
 
@@ -33,8 +38,13 @@ async function handleConnection(socket) {
     const req = parseRequest(headers);
     const res = getResponse(req, socket);
 
-    if (middleWares.length > 0) {
-      let index = 0;
+    for (const staticHandler of staticHandlers) {
+      await staticHandler(req, res);
+      if (res.headersSent) return; // If headers sent, stop further processing
+    }
+
+    let index = 0;
+    if (middleWares.length > 0 && index < middleWares.length) {
       await middleWares[index](req, res, next);
       function next() {
         index = index + 1;
@@ -50,6 +60,9 @@ async function handleConnection(socket) {
       ? methodHandler(req, res)
       : socket.writable && sendResponse(socket, { status: 404 });
 
-    socket.end();
+    // socket.end();
   });
 }
+
+// 0 1 2 3 4 -> index
+// 1 2 3 4 5  -> lenfth
