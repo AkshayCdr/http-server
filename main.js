@@ -1,7 +1,13 @@
 import { server } from "./server.js";
 import { cors } from "./middlewares.js";
 import { staticPage, bodyParser } from "./middlewares.js";
-import { insertData, getData } from "./Controller/controller.js";
+import {
+  insertData,
+  getData,
+  updateData,
+  deleteData,
+  toggleStatus,
+} from "./Controller/controller.js";
 
 const PORT = 3000;
 
@@ -27,6 +33,12 @@ app.body(bodyParser);
 app.route("GET", "/task", getData);
 
 app.route("POST", "/task", insertData);
+
+app.route("PUT", "/task/:id", updateData);
+
+app.route("DELETE", "/task/:id", deleteData);
+
+// app.route("PATCH", "/task/:id", toggleStatus);
 
 // app.route("PUT", "/", (req, res) => {
 //   res.sendStatus(300);

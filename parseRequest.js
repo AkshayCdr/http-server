@@ -1,6 +1,11 @@
-export function parseRequest(input) {
+export function parseRequest(input, routes) {
   const [firstline, remaining] = firstLineParser(input.toString());
   const [method, path, httpVersion] = firstline.split(" ");
+  const pathAndParams = parameterParser(method, path, routes);
+  let params, updatedPath;
+  if (pathAndParams) {
+    [params, updatedPath] = pathAndParams;
+  }
   const parsedHeader = headerParser(remaining);
 
   return {
@@ -8,7 +13,8 @@ export function parseRequest(input) {
       method === "OPTIONS"
         ? parsedHeader["Access-Control-Request-Method"]
         : method,
-    path,
+    path: updatedPath ? updatedPath : path,
+    params,
     httpVersion,
     parsedHeader,
   };
@@ -26,24 +32,34 @@ const headerParser = (input) =>
       .map((string) => string.split(":").map((part) => part.trim()))
   );
 
-// export const splitBody = (input) => input.toString().split(/\r?\n\r?\n/);
-
-// export function splitBody(input) {
-//   let index = input.indexOf("\r\n\r\n");
-//   console.log(index);
-//   const header = input.subarray(0, index).toString();
-//   const body = input.subarray(index, index.length).toString();
-//   console.log(header);
-//   console.log(body);
-// }
-
-// export function splitBody(input) {
-//   const index = input.indexOf("\r\n\r\n");
-
-//   return [input.subarray(0, index).toString(), input.subarray(index + 4)];
-// }
-
 export const splitBody = (input) => [
   input.subarray(0, input.indexOf("\r\n\r\n")).toString(),
   input.subarray(input.indexOf("\r\n\r\n") + 4),
 ];
+
+function parameterParser(method, path, routes) {
+  const pathArray = (method + path).split("/");
+  const routeArray = [];
+  for (let route in routes) routeArray.push(route.split("/"));
+  const output = getParameters(pathArray, routeArray);
+  return output ? output : null;
+}
+
+function getParameters(path, route) {
+  const params = {};
+  for (let i = 0; i < route.length; i++) {
+    let match = true;
+    for (let j = 0; j < path.length; j++) {
+      if (route[i][j] && route[i][j].startsWith(":")) {
+        params[route[i][j].slice(1)] = path[j];
+        continue;
+      }
+      if (!(path[j] === route[i][j])) {
+        match = false;
+        break;
+      }
+    }
+    if (match) return [params, route[i].join("/")];
+  }
+  return null;
+}
