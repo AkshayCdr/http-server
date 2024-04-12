@@ -74,7 +74,7 @@ function setRouteHandler(method, path, handler) {
 
   const segments = path.split("/");
   let currentPath = method;
-
+  //result is GET/task/:id/.......
   segments.forEach((segment) => {
     currentPath += "/" + segment;
     routes[currentPath] = handler;
