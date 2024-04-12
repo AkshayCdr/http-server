@@ -46,13 +46,13 @@ async function handleConnection(socket) {
     const req = parseRequest(headers, routes);
     const res = getResponse(req, socket);
 
-    //i dont know why this is in loop there is only one static handler
+    //i dont know why this is in loop, there is only one static handler
     for (const staticHandler of staticHandlers) {
       await staticHandler(req, res);
       if (res.headersSent) return;
     }
 
-    //i dont know why is body parser not a middleware ....
+    //i dont know why  body parser is not a middleware ....
     if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
 
     //next function is trash ... need to change it ....

@@ -36,6 +36,8 @@ app.route("POST", "/task", insertData);
 
 app.route("PUT", "/task/:id", updateData);
 
+app.route("PUT", "/task/done/:id", toggleStatus);
+
 app.route("DELETE", "/task/:id", deleteData);
 
 // app.route("PATCH", "/task/:id", toggleStatus);
