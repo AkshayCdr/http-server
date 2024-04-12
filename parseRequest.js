@@ -44,11 +44,11 @@ function parameterAndRouteParser(method, path, routes) {
   //GET/task/:id
   for (let route in routes) routeArray.push(route.split("/"));
   //params{id:1 , username:"name", ....}, path{GET/task/:id}
-  const output = getParameters(pathArray, routeArray);
+  const output = getParametersAndRoute(pathArray, routeArray);
   return output ? output : null;
 }
 
-function getParameters(path, route) {
+function getParametersAndRoute(path, route) {
   const params = {};
   for (let i = 0; i < route.length; i++) {
     let match = true;

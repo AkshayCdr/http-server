@@ -3,6 +3,7 @@ import {
   appendData,
   reWriteDataToFile,
   converDataToArray,
+  SortBasedOnId,
   readData,
 } from "./fileOperations.js";
 
@@ -11,7 +12,8 @@ export function setDataToFile(data) {
   appendData(data);
 }
 
-export const getDataFromFile = () => converDataToArray(readData());
+export const getDataFromFile = () =>
+  SortBasedOnId(converDataToArray(readData()));
 
 export function updateDataInFile(id, data) {
   let str = "";

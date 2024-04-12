@@ -13,3 +13,5 @@ export const converDataToArray = (data) =>
     .split("}")
     .map((element) => element.trim() !== "" && JSON.parse(element.trim() + "}"))
     .filter((element) => element);
+
+export const SortBasedOnId = (data) => data.sort((a, b) => a.id - b.id);

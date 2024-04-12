@@ -19,14 +19,14 @@ const setMiddlewares = (callback) => middleWares.push(callback);
 const setStatic = (callback) => staticHandlers.push(callback);
 
 //why ? array ?
-const setBody = (callback) => bodyParsers.push(callback);
+const setBodyParser = (callback) => bodyParsers.push(callback);
 
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
   app.static = setStatic;
-  app.body = setBody;
+  app.body = setBodyParser;
   return app;
 }
 
