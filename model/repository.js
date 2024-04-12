@@ -45,8 +45,6 @@ export function deleteDataInFile(id) {
 }
 
 export function changeTaskStatus(id, data) {
-  console.log(id);
-  console.log(data);
   let str = "";
   getDataFromFile()
     .map((ele) => {

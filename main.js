@@ -1,5 +1,5 @@
 import { server } from "./server.js";
-import { cors } from "./middlewares.js";
+
 import { staticPage, bodyParser } from "./middlewares.js";
 import {
   insertData,
@@ -24,11 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(bodyParser);
-
 app.body(bodyParser);
-
-// app.use(cors);
 
 app.route("GET", "/task", getData);
 
@@ -40,18 +36,6 @@ app.route("PUT", "/task/done/:id", toggleStatus);
 
 app.route("DELETE", "/task/:id", deleteData);
 
-// app.route("PATCH", "/task/:id", toggleStatus);
-
-// app.route("PUT", "/", (req, res) => {
-//   res.sendStatus(300);
-// });
-
-// app.route("DELETE", "/", (req, res) => {
-//   res.send("this is a response from delete");
-// });
-
 app.listen(PORT, () => {
   console.log("listening");
 });
-
-//pid 14378

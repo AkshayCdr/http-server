@@ -2,13 +2,7 @@ import net from "net";
 import { parseRequest, splitBody } from "./parseRequest.js";
 import { getResponse, sendResponse } from "./getResponse.js";
 
-const routes = {
-  // GET: {},
-  // POST: {},
-  // PUT: {},
-  // DELETE: {},
-  // PATCH: {},
-};
+const routes = {};
 
 const middleWares = [];
 
@@ -83,7 +77,6 @@ function setRouteHandler(method, path, handler) {
 
   segments.forEach((segment) => {
     currentPath += "/" + segment;
-
     routes[currentPath] = handler;
   });
 }
