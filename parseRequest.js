@@ -29,7 +29,7 @@ const headerParser = (input) =>
   Object.fromEntries(
     input
       .split("\r\n")
-      .map((string) => string.split(":").map((part) => part.trim()))
+      .map((string) => string.split(":").map((part) => part.trim())),
   );
 
 export const splitBody = (input) => [

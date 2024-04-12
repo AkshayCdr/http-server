@@ -16,15 +16,15 @@ const staticHandlers = [];
 
 const bodyParsers = [];
 
-// const setRoute = (method, path, handler) => (routes[method][path] = handler);
-
 const setRoute = (method, path, handler) =>
   setRouteHandler(method, path, handler);
 
 const setMiddlewares = (callback) => middleWares.push(callback);
 
+//dont know why static handler adding to array .... it is trash
 const setStatic = (callback) => staticHandlers.push(callback);
 
+//why ? array ?
 const setBody = (callback) => bodyParsers.push(callback);
 
 export function server() {
@@ -46,13 +46,16 @@ async function handleConnection(socket) {
     const req = parseRequest(headers, routes);
     const res = getResponse(req, socket);
 
+    //i dont know why this is in loop there is only one static handler
     for (const staticHandler of staticHandlers) {
       await staticHandler(req, res);
       if (res.headersSent) return;
     }
 
+    //i dont know why is body parser not a middleware ....
     if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
 
+    //next function is trash ... need to change it ....
     let index = 0;
     if (middleWares.length > 0 && index < middleWares.length) {
       await middleWares[index](req, res, next);
@@ -62,10 +65,6 @@ async function handleConnection(socket) {
       }
     }
 
-    // pathFormatter(req, routes);
-    // console.log(routes);
-    // console.log(req);
-
     const methodHandler = routes[req.path] || null;
 
     socket.on("end", () => console.log("client disconnected"));
@@ -73,64 +72,18 @@ async function handleConnection(socket) {
     methodHandler
       ? methodHandler(req, res)
       : socket.writable && sendResponse(socket, { status: 404 });
-
-    // socket.end();
   });
 }
 
-// function setRouteHandler(method, path, handler) {
-//   console.log("inside hadner");
-//   path = path.startsWith("/") ? path.slice(1) : path;
-//   const paths = path.split("/");
-
-//   let head = method;
-
-//   paths.forEach((element) => {
-//     const node = Object.create({ element: {} });
-//     routes[head] = node;
-//     head = node;
-//   });
-
-//   console.log(routes);
-//   //routes[method]path[0]path[1]path[2] ......
-//   //if there is : -> dynamic
-
-//   // console.log(paths);
-// }
-
 function setRouteHandler(method, path, handler) {
-  const paths = []; // Create an empty array to store paths
-
-  // Remove leading slash and split into segments
   path = path.startsWith("/") ? path.slice(1) : path;
-  const segments = path.split("/");
 
+  const segments = path.split("/");
   let currentPath = method;
 
   segments.forEach((segment) => {
     currentPath += "/" + segment;
 
-    // console.log(currentPath);
-    // Check for dynamic segment
-    // if (segment.startsWith(":")) {
-    //   // Dynamic segment - store placeholder in path list
-    //   paths.push(currentPath.replace(segment, ":id"));
-    // } else {
-    //   // Static segment - add full path to list
-    //   paths.push(currentPath);
-    // }
-
-    // const node = Object.create({ element: {} });
     routes[currentPath] = handler;
   });
-
-  // console.log(routes); // Still logs the route tree
-  // console.log(path);
-  // Return the list of paths with dynamic placeholders
-}
-
-function pathFormatter(req, routes) {
-  //req.method/req.path
-  // path task/1
-  //route GET/task/:id
 }
