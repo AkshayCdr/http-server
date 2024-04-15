@@ -9,11 +9,13 @@ const returnSpace = "\r\n";
 const getContentType = (mimeType) => `Content-Type : ${mimeType}`;
 const getContentLength = (data) => `Content-Length : ${findLength(data)}`;
 const getConnection = (req) => `Connection : ${req.headers["Connection"]}`;
+const getDate = () => new Date.now().toUTCString();
 
 const getResponse = (statsCode, mimeType, data, req) => [
   getFirstLine(statsCode),
   mimeType && getContentType(mimeType),
   data && getContentLength(data),
+  getDate,
   req.headers["Connection"] && getConnection(req),
 ];
 

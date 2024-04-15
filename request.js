@@ -1,17 +1,18 @@
 export function parseRequest(input, routes) {
   const [firstline, remaining] = firstLineParser(input.toString());
   const [method, path, httpVersion] = firstline.split(" ");
-  const [params, updatedRoute] = parameterAndRouteParser(
+  const [params, dynamicRoute] = parameterAndRouteParser(
     method,
     path,
     routes,
   ) || [null, null];
+  const [query, queryRoute] = [null, null];
   const headers = headerParser(remaining);
 
   return {
     method:
       method === "OPTIONS" ? headers["Access-Control-Request-Method"] : method,
-    path: updatedRoute ? updatedRoute : path,
+    path: dynamicRoute ? dynamicRoute : path,
     params,
     httpVersion,
     headers,

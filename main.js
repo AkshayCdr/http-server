@@ -17,7 +17,7 @@ const STATIC_PATH = "files";
 
 const staticMiddleWare = await staticPage(STATIC_PATH);
 
-app.static(staticMiddleWare);
+// app.static(staticMiddleWare);
 
 app.use((req, res, next) => {
   console.log("this is the first middlware");
@@ -26,16 +26,20 @@ app.use((req, res, next) => {
 
 app.body(bodyParser);
 
-app.route("GET", "/task", getData);
+app.route("GET", "/file", sendFile);
 
-app.route("POST", "/task", insertData);
+// app.route("GET", "/task", getData);
 
-app.route("PUT", "/task/:id", updateData);
+// app.route("POST", "/task", insertData);
 
-app.route("PUT", "/task/done/:id", toggleStatus);
+// app.route("PUT", "/task/:id", updateData);
 
-app.route("DELETE", "/task/:id", deleteData);
+// app.route("PUT", "/task/done/:id", toggleStatus);
+
+// app.route("DELETE", "/task/:id", deleteData);
 
 app.listen(PORT, () => {
   console.log("listening");
 });
+
+function sendFile(req, res) {}
