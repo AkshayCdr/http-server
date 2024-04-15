@@ -1,22 +1,20 @@
 export function parseRequest(input, routes) {
   const [firstline, remaining] = firstLineParser(input.toString());
   const [method, path, httpVersion] = firstline.split(" ");
-  const pathAndParams = parameterAndRouteParser(method, path, routes);
-  let params, updatedRoute;
-  if (pathAndParams) {
-    [params, updatedRoute] = pathAndParams;
-  }
-  const parsedHeader = headerParser(remaining);
+  const [params, updatedRoute] = parameterAndRouteParser(
+    method,
+    path,
+    routes,
+  ) || [null, null];
+  const headers = headerParser(remaining);
 
   return {
     method:
-      method === "OPTIONS"
-        ? parsedHeader["Access-Control-Request-Method"]
-        : method,
+      method === "OPTIONS" ? headers["Access-Control-Request-Method"] : method,
     path: updatedRoute ? updatedRoute : path,
     params,
     httpVersion,
-    parsedHeader,
+    headers,
   };
 }
 
@@ -45,7 +43,7 @@ function parameterAndRouteParser(method, path, routes) {
   for (let route in routes) routeArray.push(route.split("/"));
   //params{id:1 , username:"name", ....}, path{GET/task/:id}
   const output = getParametersAndRoute(pathArray, routeArray);
-  return output ? output : null;
+  return output || null;
 }
 
 function getParametersAndRoute(path, route) {

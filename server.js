@@ -19,14 +19,14 @@ const setMiddlewares = (callback) => middleWares.push(callback);
 const setStatic = (callback) => staticHandlers.push(callback);
 
 //why ? array ?
-const setBodyParser = (callback) => bodyParsers.push(callback);
+const setBody = (callback) => bodyParsers.push(callback);
 
 export function server() {
   const app = net.createServer(handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
   app.static = setStatic;
-  app.body = setBodyParser;
+  app.body = setBody;
   return app;
 }
 
@@ -49,7 +49,7 @@ async function handleConnection(socket) {
     //i dont know why  body parser is not a middleware ....
     if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
 
-    //next function is trash ...
+    //next function is trash ... need to change it ....
     let index = 0;
     if (middleWares.length > 0 && index < middleWares.length) {
       await middleWares[index](req, res, next);
@@ -74,9 +74,10 @@ function setRouteHandler(method, path, handler) {
 
   const segments = path.split("/");
   let currentPath = method;
-  //result is GET/task/:id/.......
+
   segments.forEach((segment) => {
     currentPath += "/" + segment;
+
     routes[currentPath] = handler;
   });
 }

@@ -19,7 +19,7 @@ export function cors(req, res, next) {
 export const bodyParser = (req, body) =>
   body.length === 0
     ? null
-    : conversion[req.parsedHeader["Content-Type"]].decode(body);
+    : conversion[req.headers["Content-Type"]].decode(body);
 
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {
