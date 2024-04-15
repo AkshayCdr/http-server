@@ -8,14 +8,6 @@ export function cors(req, res, next) {
   next();
 }
 
-// export function bodyParser(req, res, body) {
-//   console.log("inside body parser");
-//   console.log(body);
-//   const memeType = req.parsedHeader["Content-Type"];
-//   const data = conversion[memeType].decode(body);
-//   req.body = data;
-// }
-
 export const bodyParser = (req, body) =>
   body.length === 0
     ? null
@@ -27,10 +19,10 @@ export async function staticPage(url) {
       const path =
         req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
       const data = fs.readFileSync(path);
-      const memeType = getMemeType(getFileType(path));
+      const memeType = getMimeType(getFileType(path));
       res.send(200, data, memeType);
     } catch (error) {
-      // res.sendStatus(404);
+      res.send(404);
       return;
     }
   };
@@ -38,12 +30,12 @@ export async function staticPage(url) {
 
 const getFileType = (path) => path.match(/\.\w+/)[0].slice(1);
 
-const getMemeType = (file) => {
-  const memeTypes = {
+const getMimeType = (file) => {
+  const mimeTypes = {
     html: "text/html",
     css: "text/css",
     jpeg: "image/jpeg",
     js: "text/javascript",
   };
-  return memeTypes[file];
+  return mimeTypes[file];
 };

@@ -1,6 +1,6 @@
 import net from "net";
-import { parseRequest, splitBody } from "./parseRequest.js";
-import { getResponse, sendResponse } from "./getResponse.js";
+import { parseRequest, splitBody } from "./request.js";
+import { response } from "./response.js";
 
 const routes = {};
 
@@ -38,7 +38,7 @@ async function handleConnection(socket) {
 
     const [headers, body] = splitBody(data);
     const req = parseRequest(headers, routes);
-    const res = getResponse(req, socket);
+    const res = response(req, socket);
 
     //i dont know why this is in loop, there is only one static handler
     for (const staticHandler of staticHandlers) {
@@ -64,9 +64,7 @@ async function handleConnection(socket) {
 
     socket.on("end", () => console.log("client disconnected"));
 
-    methodHandler
-      ? methodHandler(req, res)
-      : socket.writable && sendResponse(socket, { status: 404 });
+    methodHandler ? methodHandler(req, res) : socket.writable && res.send(404);
   });
 }
 

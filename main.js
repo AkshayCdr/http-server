@@ -21,7 +21,6 @@ app.static(staticMiddleWare);
 
 app.use((req, res, next) => {
   console.log("this is the first middlware");
-  console.log(res);
   next();
 });
 

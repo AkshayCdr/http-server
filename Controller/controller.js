@@ -12,7 +12,7 @@ export function insertData(req, res) {
 }
 
 export function getData(req, res) {
-  res.send(200, getDataFromFile(), "application/json");
+  res.send(201, getDataFromFile(), "application/json");
 }
 
 export function updateData(req, res) {

@@ -8,36 +8,30 @@ const returnSpace = "\r\n";
 
 const getContentType = (mimeType) => `Content-Type : ${mimeType}`;
 const getContentLength = (data) => `Content-Length : ${findLength(data)}`;
-const setConnection = (req) => `Connection : ${req.headers["Connection"]}`;
+const getConnection = (req) => `Connection : ${req.headers["Connection"]}`;
 
-const createResponse = (statsCode, mimeType, data, req) => [
+const getResponse = (statsCode, mimeType, data, req) => [
   getFirstLine(statsCode),
-  getContentType(mimeType),
-  getContentLength(data),
-  req.headers["Connection"] && setConnection(req),
+  mimeType && getContentType(mimeType),
+  data && getContentLength(data),
+  req.headers["Connection"] && getConnection(req),
 ];
 
-const getttResponse = (statsCode, mimeType, data, req) =>
-  createResponse(statsCode, mimeType, data, req).join("\r\n") + "\r\n";
+const createResponse = (statsCode, mimeType, data, req) =>
+  getResponse(statsCode, mimeType, data, req).join("\r\n") + "\r\n";
 
-export function getResponse(req, socket) {
-  // const request = req;
+export function response(req, socket) {
   return {
     headersSent: false,
     send: function (status, data, mimeType) {
       this.headersSent = true; //only here
-      const encodedData = conversion[mimeType].encode(data);
-      const temp = getttResponse(status, mimeType, data, req);
-      socket.write(temp);
+      const encodedData = mimeType && conversion[mimeType].encode(data);
+      const response = createResponse(status, mimeType, data, req);
+      socket.write(response);
       socket.write(returnSpace);
-      socket.write(encodedData);
+      encodedData && socket.write(encodedData);
     },
   };
-}
-
-export function sendResponse(socket, data) {
-  socket.write(getFirstLine(data.status));
-  socket.write("\r\n");
 }
 
 const findLength = (data) => {
