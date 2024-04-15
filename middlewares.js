@@ -28,7 +28,7 @@ export async function staticPage(url) {
         req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
       const data = fs.readFileSync(path);
       const memeType = getMemeType(getFileType(path));
-      res.sendStatic(data, memeType);
+      res.send(200, data, memeType);
     } catch (error) {
       // res.sendStatus(404);
       return;

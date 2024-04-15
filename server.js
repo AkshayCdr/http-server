@@ -47,7 +47,8 @@ async function handleConnection(socket) {
     }
 
     //i dont know why  body parser is not a middleware ....
-    if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
+    if (req.method === "POST" || req.method === "PUT")
+      if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
 
     //next function is trash ... need to change it ....
     let index = 0;

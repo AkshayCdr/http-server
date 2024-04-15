@@ -8,62 +8,29 @@ const returnSpace = "\r\n";
 
 const getContentType = (mimeType) => `Content-Type : ${mimeType}`;
 const getContentLength = (data) => `Content-Length : ${findLength(data)}`;
+const setConnection = (req) => `Connection : ${req.headers["Connection"]}`;
 
-const createResponse = (statsCode, mimeType, data) => [
+const createResponse = (statsCode, mimeType, data, req) => [
   getFirstLine(statsCode),
   getContentType(mimeType),
   getContentLength(data),
+  req.headers["Connection"] && setConnection(req),
 ];
 
-const getttResponse = (statsCode, mimeType, data) =>
-  createResponse(statsCode, mimeType, data).join("\r\n") + "\r\n";
+const getttResponse = (statsCode, mimeType, data, req) =>
+  createResponse(statsCode, mimeType, data, req).join("\r\n") + "\r\n";
 
 export function getResponse(req, socket) {
-  let firstLine = getFirstLine();
-  const header = {};
-  if (req.headers["Connection"])
-    header["Connection"] = req.headers["Connection"];
-  header["Date"] = Date.now().toString();
-
+  // const request = req;
   return {
     headersSent: false,
-    send: function (data) {
-      socket.write(getFirstLine(200));
-      socket.write(getHeader(data, "text/plain"));
-      socket.write(returnSpace);
-      data && socket.write(JSON.stringify(data));
-      socket.end();
-    },
-    sendStatus: function (data) {
-      socket.write(getFirstLine(data));
-      socket.write(returnSpace);
-      socket.end();
-    },
-    json: function (data) {
-      socket.write(getFirstLine(200));
-      socket.write(getHeader(data, "application/json"));
-      socket.write(returnSpace);
-      socket.write(JSON.stringify(data) + "\r\n");
-      socket.end();
-    },
-    setHeader: function (key, value) {
-      header[key] = value;
-    },
-    writeHead: function (status) {
-      firstLine = getFirstLine(status);
-      socket.write(firstLine);
-      socket.write(JSON.stringify(header));
-      socket.write(returnSpace);
-      socket.end();
-    },
-    sendStatic: function (data, mimeType) {
+    send: function (status, data, mimeType) {
       this.headersSent = true; //only here
       const encodedData = conversion[mimeType].encode(data);
-      const temp = getttResponse(200, mimeType, data);
+      const temp = getttResponse(status, mimeType, data, req);
       socket.write(temp);
       socket.write(returnSpace);
       socket.write(encodedData);
-      socket.end();
     },
   };
 }
@@ -81,7 +48,3 @@ const findLength = (data) => {
   if (typeof data === "object")
     return Buffer.byteLength(JSON.stringify(data), "utf8");
 };
-
-//Content-Type : ;
-//Content-Length : ;
-//Connection : Keep Alive;

@@ -12,20 +12,20 @@ export function insertData(req, res) {
 }
 
 export function getData(req, res) {
-  res.json(getDataFromFile());
+  res.send(200, getDataFromFile(), "application/json");
 }
 
 export function updateData(req, res) {
   updateDataInFile(req.params.id, req.body);
-  res.send("data updated");
+  res.send(200, "data updated", "text/plain");
 }
 
 export function deleteData(req, res) {
   deleteDataInFile(req.params.id);
-  res.send("data deleted");
+  res.send(200, "data deleted", "text/plain");
 }
 
 export function toggleStatus(req, res) {
   changeTaskStatus(req.params.id, req.body);
-  res.send("status changed");
+  res.send(200, "status changed", "text/plain");
 }
