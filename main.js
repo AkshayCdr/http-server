@@ -25,14 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.body(bodyParser);
+app.body(bodyParser);
 
-// app.route("POST", "/file", getFile);
-
-app.route("GET", "/temp", (req, res) => {
-  console.log("this is inside get");
-  res.send(200, "received temp", "text/plain");
-});
+app.route("POST", "/file", getFile);
 
 // app.route("GET", "/task", getData);
 

@@ -31,14 +31,13 @@ export function response(req, socket) {
       socket.write(response);
       socket.write(returnSpace);
       encodedData && socket.write(encodedData);
-      socket.end();
+      req.headers["Connection"].toLowerCase() !== "keep-alive" && socket.end();
     },
   };
 }
 
 const findLength = (data) => {
   if (!data) return 0;
-  const space = Buffer.byteLength("\r\n");
   if (typeof data === "string") return Buffer.byteLength(data, "utf8");
   if (Buffer.isBuffer(data)) return data.length;
   if (typeof data === "object")

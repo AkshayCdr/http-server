@@ -23,4 +23,8 @@ export const conversion = {
     decode: (data) => data,
     encode: (data) => data,
   },
+  "multipart/form-data": {
+    decode: (data) => data,
+    encode: (data) => data,
+  },
 };

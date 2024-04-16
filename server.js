@@ -22,7 +22,7 @@ const setStatic = (callback) => staticHandlers.push(callback);
 const setBody = (callback) => bodyParsers.push(callback);
 
 export function server() {
-  const app = net.createServer(handleConnection);
+  const app = net.createServer({ allowHalfOpen: false }, handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
   app.static = setStatic;
@@ -33,7 +33,6 @@ export function server() {
 async function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", onData.bind(null, socket));
-  socket.on("end", () => socket.end());
 }
 
 async function onData(socket, data) {
@@ -42,6 +41,8 @@ async function onData(socket, data) {
   const [headers, body] = splitBody(data);
   const req = parseRequest(headers, routes);
   const res = response(req, socket);
+
+  keepAliveConnection(socket, req);
 
   await staticHandlers[0](req, res);
   if (res.headersSent) return;
@@ -63,8 +64,23 @@ async function onData(socket, data) {
 
   methodHandler ? methodHandler(req, res) : socket.writable && res.send(404);
 
-  socket.on("end", () => console.log("client disconnected"));
+  socket.on("end", () => {
+    console.log("client disconnected");
+  });
 }
+
+function keepAliveConnection(socket, req) {
+  if (!isThereKeepAlive(req)) return;
+  socket.setTimeout(3000);
+  socket.on("timeout", () => {
+    console.log("Time out .. Connection disconnecting");
+    socket.end();
+  });
+}
+
+const isThereKeepAlive = (req) =>
+  req.headers["Connection"] &&
+  req.headers["Connection"].toLowerCase() === "keep-alive";
 
 function setRouteHandler(method, path, handler) {
   path = path.startsWith("/") ? path.slice(1) : path;

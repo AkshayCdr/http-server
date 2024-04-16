@@ -33,5 +33,6 @@ export function toggleStatus(req, res) {
 export function getFile(req, res) {
   console.log("getting file ....");
   console.log(req);
+  console.log(req.body);
   res.send(200, "file sending success", "text/plain");
 }

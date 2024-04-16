@@ -9,9 +9,12 @@ export function cors(req, res, next) {
 }
 
 export const bodyParser = (req, body) =>
-  body.length === 0
-    ? null
-    : conversion[req.headers["Content-Type"]].decode(body);
+  body.length === 0 ? null : conversion[getContentType(req)].decode(body);
+
+const getContentType = (req) =>
+  req.headers["Content-Type"].trim().startsWith("multipart/form-data")
+    ? req.headers["Content-Type"].split(";")[0]
+    : req.headers["Content-Type"];
 
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {
