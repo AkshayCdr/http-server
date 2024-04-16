@@ -32,40 +32,37 @@ export function server() {
 
 async function handleConnection(socket) {
   console.log("client connected");
+  socket.on("data", onData.bind(null, socket));
+}
 
-  socket.on("data", async (data) => {
-    if (Buffer.byteLength(data) === 0) return null;
+async function onData(socket, data) {
+  if (Buffer.byteLength(data) === 0) return null;
 
-    const [headers, body] = splitBody(data);
-    const req = parseRequest(headers, routes);
-    const res = response(req, socket);
+  const [headers, body] = splitBody(data);
+  const req = parseRequest(headers, routes);
+  const res = response(req, socket);
 
-    //i dont know why this is in loop, there is only one static handler
-    for (const staticHandler of staticHandlers) {
-      await staticHandler(req, res);
-      if (res.headersSent) return;
+  await staticHandlers[0](req, res);
+  if (res.headersSent) return;
+
+  if (req.method === "POST" || req.method === "PUT")
+    if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
+
+  //next function is trash ... need to change it ....
+  let index = 0;
+  if (middleWares.length > 0 && index < middleWares.length) {
+    await middleWares[index](req, res, next);
+    function next() {
+      index = index + 1;
+      middleWares.length > index && middleWares[index](req, res, next);
     }
+  }
 
-    //i dont know why  body parser is not a middleware ....
-    if (req.method === "POST" || req.method === "PUT")
-      if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
+  const methodHandler = routes[req.path] || null;
 
-    //next function is trash ... need to change it ....
-    let index = 0;
-    if (middleWares.length > 0 && index < middleWares.length) {
-      await middleWares[index](req, res, next);
-      function next() {
-        index = index + 1;
-        middleWares.length > index && middleWares[index](req, res, next);
-      }
-    }
+  socket.on("end", () => console.log("client disconnected"));
 
-    const methodHandler = routes[req.path] || null;
-
-    socket.on("end", () => console.log("client disconnected"));
-
-    methodHandler ? methodHandler(req, res) : socket.writable && res.send(404);
-  });
+  methodHandler ? methodHandler(req, res) : socket.writable && res.send(404);
 }
 
 function setRouteHandler(method, path, handler) {

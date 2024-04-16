@@ -22,7 +22,7 @@ export async function staticPage(url) {
       const memeType = getMimeType(getFileType(path));
       res.send(200, data, memeType);
     } catch (error) {
-      res.send(404);
+      //if there is no static file then return
       return;
     }
   };
