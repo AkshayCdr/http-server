@@ -8,13 +8,10 @@ export function cors(req, res, next) {
   next();
 }
 
-export const bodyParser = (req, body) =>
-  body.length === 0 ? null : conversion[getContentType(req)].decode(body);
+// export const bodyParser = (req, body) =>
+//   body.length === 0 ? null : conversion[getContentType(req, body)].decode(body);
 
-const getContentType = (req) =>
-  req.headers["Content-Type"].trim().startsWith("multipart/form-data")
-    ? req.headers["Content-Type"].split(";")[0]
-    : req.headers["Content-Type"];
+const getContentType = (req, body) => req.headers["Content-Type"];
 
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {
@@ -42,3 +39,50 @@ const getMimeType = (file) => {
   };
   return mimeTypes[file];
 };
+
+export const bodyParser = (req, body) => {
+  if (body.length === 0) return null;
+  if (req.headers["Content-Type"].trim().startsWith("multipart/form-data"))
+    return fileHandler(req, body);
+  return conversion[getContentType(req, body)].decode(body);
+};
+
+function fileHandler(req, body) {
+  const [mimeType, boundary] = getMimeBoundary(req);
+  return getHeadersBody(body, boundary);
+}
+
+const getMimeBoundary = (req) =>
+  req.headers["Content-Type"]
+    .split(";")
+    .map((ele) => ele.trim())
+    .map((ele) => ele.startsWith("boundary") && ele.slice(9));
+
+function getHeadersBody(body, boundary) {
+  const [header1, header2, rawData] = getSections(body, boundary);
+  const headers = header1 + ";" + header2;
+  return { headers: getHeadersObj(headers), rawData };
+}
+
+function getHeadersObj(headers) {
+  const headerObj = {};
+  headers
+    .replaceAll("=", ":")
+    .replaceAll('"', "")
+    .split(";")
+    .forEach((ele) => {
+      const [key, value] = ele.split(":");
+      headerObj[key.trim()] = value.trim();
+    });
+  return headerObj;
+}
+
+const getSections = (body, boundary) =>
+  body
+    .toString()
+    .trim()
+    .split(boundary)
+    .filter((ele) => ele !== "--")
+    .join()
+    .split(/\r\n/)
+    .filter((ele) => ele !== "" && ele !== "--");

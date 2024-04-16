@@ -23,8 +23,12 @@ export const conversion = {
     decode: (data) => data,
     encode: (data) => data,
   },
-  "multipart/form-data": {
-    decode: (data) => data,
-    encode: (data) => data,
-  },
+  // "multipart/form-data": {
+  //   decode: (data) => data.toString(),
+  //   encode: (data) => data,
+  // },
+  // "application/x-www-form-urlencoded": {
+  //   decode: (data) => data,
+  //   encode: (data) => data,
+  // },
 };
