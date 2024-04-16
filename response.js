@@ -6,18 +6,17 @@ const getFirstLine = (status = 200) =>
 
 const returnSpace = "\r\n";
 
-const getContentType = (mimeType) => `Content-Type : ${mimeType}`;
-const getContentLength = (data) => `Content-Length : ${findLength(data)}`;
-const getConnection = (req) => `Connection : ${req.headers["Connection"]}`;
-const getDate = () => new Date.now().toUTCString();
+const getContentType = (mimeType) => `Content-Type: ${mimeType}`;
+const getContentLength = (data) => `Content-Length: ${findLength(data)}`;
+const getConnection = (req) => `Connection: ${req.headers["Connection"]}`;
 
-const getResponse = (statsCode, mimeType, data, req) => [
-  getFirstLine(statsCode),
-  mimeType && getContentType(mimeType),
-  data && getContentLength(data),
-  getDate,
-  req.headers["Connection"] && getConnection(req),
-];
+const getResponse = (statsCode, mimeType, data, req) =>
+  [
+    getFirstLine(statsCode),
+    mimeType && getContentType(mimeType),
+    data && getContentLength(data),
+    req.headers["Connection"] && getConnection(req),
+  ].filter((header) => header !== undefined);
 
 const createResponse = (statsCode, mimeType, data, req) =>
   getResponse(statsCode, mimeType, data, req).join("\r\n") + "\r\n";
@@ -32,6 +31,7 @@ export function response(req, socket) {
       socket.write(response);
       socket.write(returnSpace);
       encodedData && socket.write(encodedData);
+      socket.end();
     },
   };
 }
@@ -39,7 +39,7 @@ export function response(req, socket) {
 const findLength = (data) => {
   if (!data) return 0;
   const space = Buffer.byteLength("\r\n");
-  if (typeof data === "string") return Buffer.byteLength(data, "utf8") + space;
+  if (typeof data === "string") return Buffer.byteLength(data, "utf8");
   if (Buffer.isBuffer(data)) return data.length;
   if (typeof data === "object")
     return Buffer.byteLength(JSON.stringify(data), "utf8");

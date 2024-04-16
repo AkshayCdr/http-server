@@ -29,3 +29,9 @@ export function toggleStatus(req, res) {
   changeTaskStatus(req.params.id, req.body);
   res.send(200, "status changed", "text/plain");
 }
+
+export function getFile(req, res) {
+  console.log("getting file ....");
+  console.log(req);
+  res.send(200, "file sending success", "text/plain");
+}

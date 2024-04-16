@@ -33,6 +33,7 @@ export function server() {
 async function handleConnection(socket) {
   console.log("client connected");
   socket.on("data", onData.bind(null, socket));
+  socket.on("end", () => socket.end());
 }
 
 async function onData(socket, data) {
@@ -60,9 +61,9 @@ async function onData(socket, data) {
 
   const methodHandler = routes[req.path] || null;
 
-  socket.on("end", () => console.log("client disconnected"));
-
   methodHandler ? methodHandler(req, res) : socket.writable && res.send(404);
+
+  socket.on("end", () => console.log("client disconnected"));
 }
 
 function setRouteHandler(method, path, handler) {
