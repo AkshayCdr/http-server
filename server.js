@@ -6,21 +6,15 @@ const routes = {};
 
 const middleWares = [];
 
-const staticHandlers = [];
-
 const setRoute = (method, path, handler) =>
   setRouteHandler(method, path, handler);
 
 const setMiddlewares = (callback) => middleWares.push(callback);
 
-//dont know why static handler adding to array .... it is trash
-const setStatic = (callback) => staticHandlers.push(callback);
-
 export function server() {
   const app = net.createServer({ allowHalfOpen: false }, handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
-  app.static = setStatic;
   return app;
 }
 
@@ -38,12 +32,10 @@ async function onData(socket, data) {
 
   keepAliveConnection(socket, req);
 
-  await staticHandlers[0](req, res);
-  if (res.headersSent) return;
-
   let index = 0;
   if (middleWares.length > 0 && index < middleWares.length) {
     await middleWares[index](req, res, next, body);
+    if (res.headersSent) return;
     function next() {
       index = index + 1;
       middleWares.length > index && middleWares[index](req, res, next, body);
@@ -61,7 +53,7 @@ async function onData(socket, data) {
 
 function keepAliveConnection(socket, req) {
   if (!isThereKeepAlive(req)) return;
-  socket.setTimeout(3000);
+  socket.setTimeout(10000);
   socket.on("timeout", () => {
     console.log("Time out .. Connection disconnecting");
     socket.end();

@@ -18,7 +18,7 @@ const STATIC_PATH = "files";
 
 const staticMiddleWare = await staticPage(STATIC_PATH);
 
-app.static(staticMiddleWare);
+app.use(staticMiddleWare);
 
 app.use((req, res, next) => {
   console.log("this is the first middlware");

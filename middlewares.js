@@ -9,7 +9,7 @@ export function cors(req, res, next) {
 }
 
 export async function staticPage(url) {
-  return async function staticMidlleware(req, res) {
+  return async function staticMidlleware(req, res, next) {
     try {
       const path =
         req.path === "/" ? `./${url}/index.html` : `./${url}/${req.path}`;
@@ -18,6 +18,7 @@ export async function staticPage(url) {
       res.send(200, data, memeType);
     } catch (error) {
       //if there is no static file then return
+      next();
       return;
     }
   };
