@@ -8,9 +8,6 @@ export function cors(req, res, next) {
   next();
 }
 
-// export const bodyParser = (req, body) =>
-//   body.length === 0 ? null : conversion[getContentType(req, body)].decode(body);
-
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {
     try {
@@ -38,11 +35,21 @@ const getMimeType = (file) => {
   return mimeTypes[file];
 };
 
-export const bodyParser = (req, body) => {
-  if (body.length === 0) return null;
-  if (req.headers["Content-Type"].trim().startsWith("multipart/form-data"))
-    return fileHandler(req, body);
-  return conversion[getContentType(req, body)].decode(body);
+export const bodyParser = (req, res, next, body) => {
+  if (req.method === "POST" || req.method === "PUT") {
+    if (body.length === 0) {
+      next();
+      return;
+    }
+    if (req.headers["Content-Type"].trim().startsWith("multipart/form-data")) {
+      req.body = fileHandler(req, body);
+      next();
+      return;
+    }
+    req.body = conversion[getContentType(req, body)].decode(body);
+  }
+  next();
+  return;
 };
 
 const getContentType = (req, body) => req.headers["Content-Type"];

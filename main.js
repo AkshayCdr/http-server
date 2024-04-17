@@ -25,7 +25,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.body(bodyParser);
+app.use(bodyParser);
+
+app.route("POST", "/test", (req, res) => {
+  console.log(req);
+  res.send(200, "receivedd", "text/plain");
+});
 
 app.route("POST", "/file", getFile);
 

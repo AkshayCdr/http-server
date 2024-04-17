@@ -8,8 +8,6 @@ const middleWares = [];
 
 const staticHandlers = [];
 
-const bodyParsers = [];
-
 const setRoute = (method, path, handler) =>
   setRouteHandler(method, path, handler);
 
@@ -18,15 +16,11 @@ const setMiddlewares = (callback) => middleWares.push(callback);
 //dont know why static handler adding to array .... it is trash
 const setStatic = (callback) => staticHandlers.push(callback);
 
-//why ? array ?
-const setBody = (callback) => bodyParsers.push(callback);
-
 export function server() {
   const app = net.createServer({ allowHalfOpen: false }, handleConnection);
   app.route = setRoute;
   app.use = setMiddlewares;
   app.static = setStatic;
-  app.body = setBody;
   return app;
 }
 
@@ -47,14 +41,12 @@ async function onData(socket, data) {
   await staticHandlers[0](req, res);
   if (res.headersSent) return;
 
-  parsingBody(req, body);
-
   let index = 0;
   if (middleWares.length > 0 && index < middleWares.length) {
-    await middleWares[index](req, res, next);
+    await middleWares[index](req, res, next, body);
     function next() {
       index = index + 1;
-      middleWares.length > index && middleWares[index](req, res, next);
+      middleWares.length > index && middleWares[index](req, res, next, body);
     }
   }
 
@@ -74,11 +66,6 @@ function keepAliveConnection(socket, req) {
     console.log("Time out .. Connection disconnecting");
     socket.end();
   });
-}
-
-function parsingBody(req, body) {
-  if ((req.method === "POST" || req.method === "PUT") && bodyParsers[0])
-    req.body = bodyParsers[0](req, body);
 }
 
 const isThereKeepAlive = (req) =>
