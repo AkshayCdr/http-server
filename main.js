@@ -14,7 +14,7 @@ const PORT = 3000;
 
 const app = server();
 
-const STATIC_PATH = "public";
+const STATIC_PATH = "files";
 
 const staticMiddleWare = await staticPage(STATIC_PATH);
 
@@ -27,12 +27,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser);
 
-app.route("POST", "/test", (req, res) => {
-  console.log(req);
-  res.send(200, "receivedd", "text/plain");
-});
-
-app.route("POST", "/file", getFile);
+// app.route("POST", "/file", getFile);
 
 app.route("GET", "/task", getData);
 
@@ -40,9 +35,9 @@ app.route("POST", "/task", insertData);
 
 app.route("PUT", "/task/:id", updateData);
 
-// app.route("PUT", "/task/done/:id", toggleStatus);
+app.route("PUT", "/task/done/:id", toggleStatus);
 
-// app.route("DELETE", "/task/:id", deleteData);
+app.route("DELETE", "/task/:id", deleteData);
 
 app.listen(PORT, () => {
   console.log("listening");

@@ -36,17 +36,12 @@ const getMimeType = (file) => {
 };
 
 export const bodyParser = (req, res, next, body) => {
-  if (req.method === "POST" || req.method === "PUT") {
-    if (body.length === 0) {
-      next();
-      return;
-    }
+  if ((req.method === "POST" || req.method === "PUT") && body.length !== 0) {
     if (req.headers["Content-Type"].trim().startsWith("multipart/form-data")) {
       req.body = fileHandler(req, body);
-      next();
-      return;
+    } else {
+      req.body = conversion[getContentType(req, body)].decode(body);
     }
-    req.body = conversion[getContentType(req, body)].decode(body);
   }
   next();
   return;

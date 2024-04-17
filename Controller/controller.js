@@ -8,7 +8,7 @@ import {
 
 export function insertData(req, res) {
   setDataToFile(req.body);
-  res.send("Data set");
+  res.send(200, "Data set", "text/plain");
 }
 
 export function getData(req, res) {
