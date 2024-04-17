@@ -21,7 +21,7 @@ const getResponse = (statsCode, mimeType, data, req) =>
   ].filter((header) => header !== undefined);
 
 const createResponse = (statsCode, mimeType, data, req) =>
-  getResponse(statsCode, mimeType, data, req).join("\r\n") + "\r\n";
+  getResponse(statsCode, mimeType, data, req).join(CLRF) + CLRF;
 
 export function response(req, socket) {
   return {

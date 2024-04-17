@@ -68,6 +68,7 @@ function getParametersAndRoute(path, route) {
 
 function queryParser(method, path, routes) {
   const [pathArray, _] = getPathAndRouteArray(method, path, routes) || [];
+  if (!pathArray.join("/").includes("?")) return null;
   const output = getQueryParams(pathArray);
   return output || null;
 }

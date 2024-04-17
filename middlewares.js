@@ -11,8 +11,6 @@ export function cors(req, res, next) {
 // export const bodyParser = (req, body) =>
 //   body.length === 0 ? null : conversion[getContentType(req, body)].decode(body);
 
-const getContentType = (req, body) => req.headers["Content-Type"];
-
 export async function staticPage(url) {
   return async function staticMidlleware(req, res) {
     try {
@@ -47,7 +45,10 @@ export const bodyParser = (req, body) => {
   return conversion[getContentType(req, body)].decode(body);
 };
 
+const getContentType = (req, body) => req.headers["Content-Type"];
+
 function fileHandler(req, body) {
+  console.log(body.toString());
   const [mimeType, boundary] = getMimeBoundary(req);
   return getHeadersBody(body, boundary);
 }
