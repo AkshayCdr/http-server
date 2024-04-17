@@ -27,13 +27,13 @@ app.use((req, res, next) => {
 
 app.body(bodyParser);
 
-app.route("POST", "/file", getFile);
+// app.route("POST", "/file", getFile);
 
-// app.route("GET", "/task", getData);
+app.route("GET", "/task", getData);
 
-// app.route("POST", "/task", insertData);
+app.route("POST", "/task", insertData);
 
-// app.route("PUT", "/task/:id", updateData);
+app.route("PUT", "/task/:id", updateData);
 
 // app.route("PUT", "/task/done/:id", toggleStatus);
 

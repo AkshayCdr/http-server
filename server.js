@@ -47,10 +47,8 @@ async function onData(socket, data) {
   await staticHandlers[0](req, res);
   if (res.headersSent) return;
 
-  if (req.method === "POST" || req.method === "PUT")
-    if (bodyParsers[0]) req.body = bodyParsers[0](req, body);
+  parsingBody(req, body);
 
-  //next function is trash ... need to change it ....
   let index = 0;
   if (middleWares.length > 0 && index < middleWares.length) {
     await middleWares[index](req, res, next);
@@ -76,6 +74,11 @@ function keepAliveConnection(socket, req) {
     console.log("Time out .. Connection disconnecting");
     socket.end();
   });
+}
+
+function parsingBody(req, body) {
+  if ((req.method === "POST" || req.method === "PUT") && bodyParsers[0])
+    req.body = bodyParsers[0](req, body);
 }
 
 const isThereKeepAlive = (req) =>

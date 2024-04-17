@@ -4,12 +4,13 @@ import { conversion } from "./mimeType.js";
 const getFirstLine = (status = 200) =>
   "HTTP/1.1" + " " + status + " " + statusCode[status];
 
-const returnSpace = "\r\n";
+const CLRF = "\r\n";
 
 const getContentType = (mimeType) => `Content-Type: ${mimeType}`;
 const getContentLength = (data) => `Content-Length: ${findLength(data)}`;
 const getConnection = (req) => `Connection: ${req.headers["Connection"]}`;
 const getDate = () => `Date: ${new Date().toUTCString}`;
+
 const getResponse = (statsCode, mimeType, data, req) =>
   [
     getFirstLine(statsCode),
@@ -30,7 +31,7 @@ export function response(req, socket) {
       const encodedData = mimeType && conversion[mimeType].encode(data);
       const response = createResponse(status, mimeType, data, req);
       socket.write(response);
-      socket.write(returnSpace);
+      socket.write(CLRF);
       encodedData && socket.write(encodedData);
       req.headers["Connection"].toLowerCase() !== "keep-alive" && socket.end();
     },

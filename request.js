@@ -6,14 +6,18 @@ export function parseRequest(input, routes) {
     path,
     routes,
   ) || [null, null];
-  const [query, queryRoute] = [null, null];
+  const [queries, queryRoute] = queryParser(method, path, routes) || [
+    null,
+    null,
+  ];
   const headers = headerParser(remaining);
 
   return {
     method:
       method === "OPTIONS" ? headers["Access-Control-Request-Method"] : method,
-    path: dynamicRoute ? dynamicRoute : path,
+    path: dynamicRoute ? dynamicRoute : queryRoute ? queryRoute : path,
     params,
+    queries,
     httpVersion,
     headers,
   };
@@ -37,12 +41,8 @@ export const splitBody = (input) => [
 ];
 
 function parameterAndRouteParser(method, path, routes) {
-  // GET/task/1.. . split('/')
-  const pathArray = (method + path).split("/");
-  const routeArray = [];
-  //GET/task/:id
-  for (let route in routes) routeArray.push(route.split("/"));
-  //params{id:1 , username:"name", ....}, path{GET/task/:id}
+  const [pathArray, routeArray] =
+    getPathAndRouteArray(method, path, routes) || [];
   const output = getParametersAndRoute(pathArray, routeArray);
   return output || null;
 }
@@ -64,4 +64,35 @@ function getParametersAndRoute(path, route) {
     if (match) return [params, route[i].join("/")];
   }
   return null;
+}
+
+function queryParser(method, path, routes) {
+  const [pathArray, _] = getPathAndRouteArray(method, path, routes) || [];
+  const output = getQueryParams(pathArray);
+  return output || null;
+}
+
+const getQueryParams = (path) => [
+  getParams(path),
+  path.join("/").split("?")[0],
+];
+
+const getParams = (path) => {
+  const obj = {};
+  path
+    .join("/")
+    .split("?")[1]
+    .split("&")
+    .forEach((element) => {
+      const [key, value] = element.split("=");
+      obj[key] = value;
+    });
+  return obj;
+};
+
+function getPathAndRouteArray(method, path, routes) {
+  const pathArray = (method + path).split("/");
+  const routeArray = [];
+  for (let route in routes) routeArray.push(route.split("/"));
+  return [pathArray, routeArray];
 }
