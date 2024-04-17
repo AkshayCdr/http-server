@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 app.body(bodyParser);
 
-// app.route("POST", "/file", getFile);
+app.route("POST", "/file", getFile);
 
 app.route("GET", "/task", getData);
 

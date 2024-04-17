@@ -9,7 +9,7 @@ const CLRF = "\r\n";
 const getContentType = (mimeType) => `Content-Type: ${mimeType}`;
 const getContentLength = (data) => `Content-Length: ${findLength(data)}`;
 const getConnection = (req) => `Connection: ${req.headers["Connection"]}`;
-const getDate = () => `Date: ${new Date().toUTCString}`;
+const getDate = () => `Date: ${new Date().toUTCString()}`;
 
 const getResponse = (statsCode, mimeType, data, req) =>
   [
