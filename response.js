@@ -33,7 +33,8 @@ export function response(req, socket) {
       socket.write(response);
       socket.write(CLRF);
       encodedData && socket.write(encodedData);
-      req.headers["Connection"].toLowerCase() !== "keep-alive" && socket.end();
+      // req.headers["Connection"].toLowerCase() !== "keep-alive" && socket.end();
+      socket.end();
     },
   };
 }

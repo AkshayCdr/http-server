@@ -15,3 +15,7 @@ export const converDataToArray = (data) =>
     .filter((element) => element);
 
 export const SortBasedOnId = (data) => data.sort((a, b) => a.id - b.id);
+
+export function writeData(req) {
+  console.log(req);
+}

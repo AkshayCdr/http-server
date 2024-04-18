@@ -5,6 +5,7 @@ import {
   converDataToArray,
   SortBasedOnId,
   readData,
+  writeData,
 } from "./fileOperations.js";
 
 export function setDataToFile(data) {
@@ -62,4 +63,8 @@ export function changeTaskStatus(id, data) {
     .forEach((ele) => (str += JSON.stringify(ele)));
 
   reWriteDataToFile(str);
+}
+
+export async function writeToFile(req) {
+  writeData(req);
 }

@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser);
 
-// app.route("POST", "/file", getFile);
+app.route("POST", "/file", getFile);
 
 app.route("GET", "/task", getData);
 
@@ -42,3 +42,8 @@ app.route("DELETE", "/task/:id", deleteData);
 app.listen(PORT, () => {
   console.log("listening");
 });
+
+//things to fix
+//keep connection header
+//file handling
+//chunked data - transfer encoding chunked

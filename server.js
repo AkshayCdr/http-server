@@ -30,7 +30,7 @@ async function onData(socket, data) {
   const req = parseRequest(headers, routes);
   const res = response(req, socket);
 
-  keepAliveConnection(socket, req);
+  // keepAliveConnection(socket, req);
 
   let index = 0;
   if (middleWares.length > 0 && index < middleWares.length) {

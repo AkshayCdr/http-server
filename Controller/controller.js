@@ -4,6 +4,7 @@ import {
   updateDataInFile,
   deleteDataInFile,
   changeTaskStatus,
+  writeToFile,
 } from "../model/repository.js";
 
 export function insertData(req, res) {
@@ -30,8 +31,8 @@ export function toggleStatus(req, res) {
   res.send(200, "status changed", "text/plain");
 }
 
-export function getFile(req, res) {
+export async function getFile(req, res) {
   console.log("getting file ....");
-  console.log(req.body);
+  await writeToFile(req);
   res.send(200, "file sending success", "text/plain");
 }
