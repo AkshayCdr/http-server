@@ -14,7 +14,7 @@ const PORT = 3000;
 
 const app = server();
 
-const STATIC_PATH = "files";
+const STATIC_PATH = "public";
 
 const staticMiddleWare = await staticPage(STATIC_PATH);
 

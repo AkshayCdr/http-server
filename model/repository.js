@@ -5,7 +5,7 @@ import {
   converDataToArray,
   SortBasedOnId,
   readData,
-  writeData,
+  saveFile,
 } from "./fileOperations.js";
 
 export function setDataToFile(data) {
@@ -66,5 +66,14 @@ export function changeTaskStatus(id, data) {
 }
 
 export async function writeToFile(req) {
-  writeData(req);
+  req.body.forEach((formData) => {
+    if (formData.filename) {
+      //if it is file
+      try {
+        saveFile(formData);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  });
 }
