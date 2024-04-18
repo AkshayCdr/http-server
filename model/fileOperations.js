@@ -17,5 +17,13 @@ export const converDataToArray = (data) =>
 export const SortBasedOnId = (data) => data.sort((a, b) => a.id - b.id);
 
 export function writeData(req) {
-  console.log(req);
+  req.body.forEach((element) => {
+    if (element.filename) {
+      try {
+        fs.writeFileSync(`Fileuploads/${element.filename}`, element.rawData);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  });
 }

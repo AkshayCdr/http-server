@@ -73,7 +73,8 @@ function formDataHandler(req, body) {
 
     if (fileName && fileName[1]) obj["filename"] = fileName[1];
     if (mimeType && mimeType[1]) obj["mimetype"] = mimeType[1];
-    if (name && name[1]) obj[name[1]] = body.trim();
+    if (name && name[1]) obj["name"] = name[1];
+    if (body) obj["rawData"] = body.trim();
 
     formData.push(obj);
   });
